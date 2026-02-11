@@ -20,7 +20,7 @@ EOT
     display_name        = string
     name                = string
     resource_group_name = string
-    secret              = optional(bool, false)
+    secret              = optional(bool) # Default: false
     tags                = optional(list(string))
     value               = optional(string)
     value_from_key_vault = optional(object({
