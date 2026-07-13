@@ -22,7 +22,7 @@ EOT
     display_name                = string
     name                        = string
     resource_group_name         = string
-    secret                      = optional(bool) # Default: false
+    secret                      = optional(bool)
     tags                        = optional(list(string))
     value                       = optional(string)
     value_key_vault_id          = optional(string)
@@ -32,22 +32,6 @@ EOT
       secret_id          = string
     }))
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_named_values : (
-        v.value_from_key_vault == null || (v.value_from_key_vault.identity_client_id == null || (can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", v.value_from_key_vault.identity_client_id))))
-      )
-    ])
-    error_message = "must be a valid UUID"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.api_management_named_values : (
-        v.value == null || (length(v.value) > 0)
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_api_management_named_value's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
@@ -76,5 +60,11 @@ EOT
   #   source:    [from keyvault.ValidateNestedItemID] !ok
   # path: value_from_key_vault.secret_id
   #   source:    [from keyvault.ValidateNestedItemID] err != nil
+  # path: value_from_key_vault.identity_client_id
+  #   condition: can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", value))
+  #   message:   must be a valid UUID
+  # path: value
+  #   condition: length(value) > 0
+  #   message:   must not be empty
 }
 
