@@ -33,6 +33,6 @@ output "api_management_named_values_value" {
 }
 output "api_management_named_values_value_from_key_vault" {
   description = "Map of value_from_key_vault values across all api_management_named_values, keyed the same as var.api_management_named_values"
-  value       = { for k, v in azurerm_api_management_named_value.api_management_named_values : k => v.value_from_key_vault if v.value_from_key_vault != null && length(v.value_from_key_vault) > 0 }
+  value       = { for k, v in azurerm_api_management_named_value.api_management_named_values : k => one(v.value_from_key_vault) if v.value_from_key_vault != null && length(v.value_from_key_vault) > 0 }
 }
 
